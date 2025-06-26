@@ -17,6 +17,7 @@ services:
 
     depends_on:
       - database
+      - redis
 
   database:
     image: postgres:16.3-alpine
@@ -24,3 +25,48 @@ services:
       - POSTGRES_DB=db
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=dbpass
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build:
+      context: .
+    volumes:
+      - ./taskmanager-backend:/taskmanager-backend
+    working_dir: /taskmanager-backend
+    environment:
+      - DB_HOST=database
+      - DB_NAME=db
+      - DB_USER=dbuser
+      - DB_PASS=dbpass
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    command: celery -A taskmanager worker -P threads
+    depends_on:
+      - database
+      - redis
+
+  beat:
+    build:
+      context: .
+    volumes:
+      - ./taskmanager-backend:/taskmanager-backend
+    working_dir: /taskmanager-backend
+    environment:
+      - DB_HOST=database
+      - DB_NAME=db
+      - DB_USER=dbuser
+      - DB_PASS=dbpass
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    command: celery -A taskmanager beat
+    depends_on:
+      - database
+      - redis
+
+volumes:
+  postgres_data:
+  redis_data:

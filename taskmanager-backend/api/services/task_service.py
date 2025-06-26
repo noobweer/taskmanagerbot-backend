@@ -1,9 +1,9 @@
 from datetime import datetime
-
 from django.utils import timezone
 
 from ..models import *
 from django.contrib.auth.models import User
+from ..serializers import TaskSerializer
 
 
 class TaskService:
@@ -120,3 +120,13 @@ class TaskService:
             return {'is_deleted': True, 'message': f'Task deleted successfully'}
         except Exception as e:
             return {'is_deleted': False, 'message': str(e)}
+
+    def tasks(self):
+        try:
+            tasks = self.Task.all()
+            serializer = TaskSerializer(tasks, many=True)
+
+            return {'success': True, 'tasks': serializer.data}
+        except Exception as e:
+            print(e)
+            return {'success': False, 'tasks': []}

@@ -1,6 +1,6 @@
 import aiohttp
 from typing import Optional, Dict, List
-from config import AUTH_URL, TASK_URL
+from config import *
 
 
 async def get_or_create_user(telegram_id: int) -> Optional[Dict]:
@@ -24,15 +24,15 @@ async def fetch_tasks(token: str) -> List[Dict]:
 async def create_task(token: str, title: str, due_date: str) -> (bool, str):
     payload = {
         "title": title,
+        "description": "Тестовая таска",
         "due_date": due_date,
-        "is_completed": False,
-        "category": "default"
+        "category": "Баги"
     }
     headers = {"Authorization": f"Token {token}", "Content-Type": "application/json"}
 
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(f"{TASK_URL}create-task/", json=payload, headers=headers) as resp:
+            async with session.post(CREATE_TASK_URL, json=payload, headers=headers) as resp:
                 if resp.status == 201:
                     return True, "✅ Задача создана!"
                 return False, f"❌ Ошибка: {await resp.text()}"

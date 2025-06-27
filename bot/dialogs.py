@@ -66,7 +66,7 @@ tasks_window = Window(
 
 
 # --- ADD TASK TITLE ---
-async def title_handler(message: Message, *_, manager: DialogManager):
+async def title_handler(message: Message, widget, manager: DialogManager, *args):
     manager.dialog_data["title"] = message.text
     await manager.switch_to(TaskDialogSG.add_due_date)
 
@@ -79,7 +79,7 @@ title_window = Window(
 
 
 # --- ADD TASK DATE ---
-async def due_date_handler(message: Message, *_, manager: DialogManager):
+async def due_date_handler(message: Message, widget, manager: DialogManager, *args):
     manager.dialog_data["due_date"] = message.text
     await manager.switch_to(TaskDialogSG.finish)
 
@@ -94,11 +94,18 @@ due_date_window = Window(
 # --- FINISH TASK CREATION ---
 async def finish_handler(callback: CallbackQuery, button, manager: DialogManager):
     data = manager.dialog_data
-    token, title, due = data.get("token"), data.get("title"), data.get("due_date")
+    token = data.get("token")
+    title = data.get("title")
+    due = data.get("due_date")
+
+    if not token:
+        await callback.message.answer("❌ Ошибка: токен не найден.")
+        return
 
     success, msg = await create_task(token, title, due)
     await callback.message.answer(msg)
     await manager.switch_to(TaskDialogSG.menu)
+
 
 finish_window = Window(
     Const("Создать задачу?"),

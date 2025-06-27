@@ -18,12 +18,11 @@ class TaskService:
             title = data.get('title')
             description = data.get('description')
             category_name = data.get('category')
-            username = data.get('username')
             user_obj = self.TelegramUser.get(user=user)
 
-            if not all([due_date_str, title, category_name, username]):
+            if not all([due_date_str, title, category_name]):
                 return {'is_created': False,
-                        'message': 'Send all required fields (due_date, title, category_name, username)'}
+                        'message': 'Send all required fields (due_date, title, category_name)'}
 
             try:
                 due_date = datetime.fromisoformat(due_date_str)

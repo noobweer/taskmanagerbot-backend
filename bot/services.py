@@ -33,8 +33,9 @@ async def create_task(token: str, title: str, due_date: str) -> (bool, str):
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(CREATE_TASK_URL, json=payload, headers=headers) as resp:
-                if resp.status == 201:
+                data = await resp.json()
+                if data.get("is_created"):
                     return True, "✅ Задача создана!"
-                return False, f"❌ Ошибка: {await resp.text()}"
+                return False, f"❌ Ошибка: {data.get('message') or await resp.text()}"
         except Exception as e:
             return False, f"⚠️ Ошибка подключения: {e}"

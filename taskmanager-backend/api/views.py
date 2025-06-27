@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -31,6 +30,8 @@ class TasksView(APIView):
 
 
 class CreateTaskView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         user = request.user
         data = request.data
@@ -40,18 +41,24 @@ class CreateTaskView(APIView):
 
 
 class EditTaskView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
+        user = request.user
         data = request.data
 
-        edit_result = TaskService().edit_task(data)
+        edit_result = TaskService().edit_task(data, user)
         return Response(edit_result)
 
 
 class DeleteTaskView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
+        user = request.user
         data = request.data
 
-        delete_result = TaskService().delete_task(data)
+        delete_result = TaskService().delete_task(data, user)
         return Response(delete_result)
 
 
@@ -64,6 +71,8 @@ class CategoriesView(APIView):
 
 
 class CreateCategoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         data = request.data
 
@@ -72,6 +81,8 @@ class CreateCategoryView(APIView):
 
 
 class EditCategoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         data = request.data
 
@@ -80,6 +91,8 @@ class EditCategoryView(APIView):
 
 
 class DeleteCategoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         data = request.data
 

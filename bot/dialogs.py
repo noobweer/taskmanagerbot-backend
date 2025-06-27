@@ -94,18 +94,11 @@ due_date_window = Window(
 # --- FINISH TASK CREATION ---
 async def finish_handler(callback: CallbackQuery, button, manager: DialogManager):
     data = manager.dialog_data
-    token = data.get("token")
-    title = data.get("title")
-    due = data.get("due_date")
-
-    if not token:
-        await callback.message.answer("❌ Ошибка: токен не найден.")
-        return
+    token, title, due = data.get("token"), data.get("title"), data.get("due_date")
 
     success, msg = await create_task(token, title, due)
     await callback.message.answer(msg)
     await manager.switch_to(TaskDialogSG.menu)
-
 
 finish_window = Window(
     Const("Создать задачу?"),
@@ -114,5 +107,9 @@ finish_window = Window(
     state=TaskDialogSG.finish,
 )
 
+async def on_dialog_start(start_data: dict, dialog_manager: DialogManager):
+    token = start_data.get("token")
+    if token:
+        dialog_manager.dialog_data["token"] = token
 
-dialog = Dialog(menu_window, tasks_window, title_window, due_date_window, finish_window)
+dialog = Dialog(menu_window, tasks_window, title_window, due_date_window, finish_window, on_start=on_dialog_start)

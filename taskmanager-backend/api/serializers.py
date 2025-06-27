@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
 
+
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -11,7 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name')
-    username = serializers.CharField(source='user.username')
+    user = serializers.CharField(source='user.user')
 
     class Meta:
         model = Task
@@ -23,7 +24,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'description',
             'is_completed',
             'category',
-            'username',
+            'user',
         ]
         read_only_fields = ['id', 'created_date']
 

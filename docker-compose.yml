@@ -12,6 +12,7 @@ services:
       - DB_NAME=db
       - DB_USER=dbuser
       - DB_PASS=dbpass
+      - BOT_TOKEN=8050730418:AAHagLyhx4A0ilLRYTc2y0gYkFwxfD3hCKQ
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     depends_on:
@@ -44,6 +45,7 @@ services:
       - DB_NAME=db
       - DB_USER=dbuser
       - DB_PASS=dbpass
+      - BOT_TOKEN=8050730418:AAHagLyhx4A0ilLRYTc2y0gYkFwxfD3hCKQ
       - CELERY_BROKER_URL=redis://redis:6379/0
     command: celery -A taskmanager worker -P threads
     depends_on:
@@ -62,6 +64,7 @@ services:
       - DB_NAME=db
       - DB_USER=dbuser
       - DB_PASS=dbpass
+      - BOT_TOKEN=8050730418:AAHagLyhx4A0ilLRYTc2y0gYkFwxfD3hCKQ
       - CELERY_BROKER_URL=redis://redis:6379/0
     command: celery -A taskmanager beat
     depends_on:

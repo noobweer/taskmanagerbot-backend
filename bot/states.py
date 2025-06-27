@@ -6,4 +6,4 @@ class TaskDialogSG(StatesGroup):
     tasks = State()
     add_title = State()
     add_due_date = State()
-    finish_adding = State()
+    finish = State()

@@ -2,19 +2,18 @@ services:
   taskmanager-backend:
     build:
       context: .
+      dockerfile: taskmanager-backend/Dockerfile.django
     ports:
       - "8000:8000"
     volumes:
-      - ./taskmanager-backend:/taskmanager-backend
+      - ./taskmanager-backend:/app
     environment:
       - DB_HOST=database
       - DB_NAME=db
       - DB_USER=dbuser
       - DB_PASS=dbpass
-
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
-
     depends_on:
       - database
       - redis
@@ -36,9 +35,10 @@ services:
   celery:
     build:
       context: .
+      dockerfile: taskmanager-backend/Dockerfile.django
     volumes:
-      - ./taskmanager-backend:/taskmanager-backend
-    working_dir: /taskmanager-backend
+      - ./taskmanager-backend:/app
+    working_dir: /app
     environment:
       - DB_HOST=database
       - DB_NAME=db
@@ -53,9 +53,10 @@ services:
   beat:
     build:
       context: .
+      dockerfile: taskmanager-backend/Dockerfile.django
     volumes:
-      - ./taskmanager-backend:/taskmanager-backend
-    working_dir: /taskmanager-backend
+      - ./taskmanager-backend:/app
+    working_dir: /app
     environment:
       - DB_HOST=database
       - DB_NAME=db
@@ -66,6 +67,20 @@ services:
     depends_on:
       - database
       - redis
+
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: bot/Dockerfile.bot
+    volumes:
+      - ./bot:/bot
+    working_dir: /bot
+    environment:
+      - BOT_TOKEN=8050730418:AAHagLyhx4A0ilLRYTc2y0gYkFwxfD3hCKQ
+    command: sh -c "python main.py"
+    depends_on:
+      - taskmanager-backend
+    restart: unless-stopped
 
 volumes:
   postgres_data:

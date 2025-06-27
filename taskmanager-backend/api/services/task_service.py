@@ -10,14 +10,16 @@ class TaskService:
     def __init__(self):
         self.Task = Task.objects
         self.Category = Category.objects
+        self.TelegramUser = TelegramUser.objects
 
-    def create_task(self, data):
+    def create_task(self, data, user):
         try:
             due_date_str = data.get('deadline')  #example datetime 2025-04-05T14:30:00
             title = data.get('title')
             description = data.get('description')
             category_name = data.get('category')
             username = data.get('username')
+            user_obj = self.TelegramUser.get(user=user)
 
             if not all([due_date_str, title, category_name, username]):
                 return {'is_created': False,
@@ -40,10 +42,6 @@ class TaskService:
             if not self.Category.filter(name=category_name).exists():
                 return {'is_created': False, 'message': f'Invalid category: {category_name}'}
             category_obj = self.Category.get(name=category_name)
-
-            if not User.objects.filter(username=username).exists():
-                return {'is_created': False, 'message': f'Invalid username: {username}'}
-            user_obj = User.objects.get(username=username)
 
             self.Task.create(due_date=due_date, title=title, description=description,
                              category=category_obj, user=user_obj)
@@ -121,12 +119,12 @@ class TaskService:
         except Exception as e:
             return {'is_deleted': False, 'message': str(e)}
 
-    def tasks(self):
+    def tasks(self, user):
         try:
-            tasks = self.Task.all()
+            user_obj = self.TelegramUser.get(user=user)
+            tasks = self.Task.filter(user=user_obj)
             serializer = TaskSerializer(tasks, many=True)
 
-            return {'success': True, 'tasks': serializer.data}
+            return {'success': True, 'tasks': serializer.data, 'message': 'Fetched tasks successfully'}
         except Exception as e:
-            print(e)
-            return {'success': False, 'tasks': []}
+            return {'success': False, 'tasks': [], 'message': str(e)}

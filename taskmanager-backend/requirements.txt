@@ -6,3 +6,7 @@ django-celery-beat
 redis
 ulid-py
 django-cors-headers
+requests
+aiogram
+aiogram_dialog
+aiohttp

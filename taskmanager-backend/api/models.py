@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.auth import get_user_model
 from .services.ulid_service import ULIDField
@@ -9,6 +8,9 @@ from .services.ulid_service import ULIDField
 class TelegramUser(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     telegram_id = models.BigIntegerField(unique=True)
+
+    def __str__(self):
+        return f"{self.user} — {self.telegram_id}"
 
 
 class Category(models.Model):

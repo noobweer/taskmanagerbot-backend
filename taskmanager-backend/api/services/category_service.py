@@ -55,7 +55,6 @@ class CategoryService:
         try:
             categories_list = self.Category.all()
             serializer = CategorySerializer(categories_list, many=True)
-            return {'success': True, 'categories': serializer.data}
+            return {'success': True, 'categories': serializer.data, 'message': 'Fetched categories successfully'}
         except Exception as e:
-            print(e)
-            return {'success': False, 'categories': []}
+            return {'success': False, 'categories': [], 'message': str(e)}

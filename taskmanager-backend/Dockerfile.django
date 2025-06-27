@@ -1,0 +1,21 @@
+FROM python:3.12-alpine3.20
+
+RUN apk add --no-cache \
+    postgresql-client \
+    build-base \
+    postgresql-dev \
+    tzdata
+
+WORKDIR /app
+
+COPY taskmanager-backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY taskmanager-backend/ .
+
+RUN adduser -D taskmanager-user && chown -R taskmanager-user:taskmanager-user /app
+USER taskmanager-user
+
+EXPOSE 8000
+
+CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:8000"]

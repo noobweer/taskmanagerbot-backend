@@ -1,0 +1,16 @@
+FROM python:3.12-alpine3.20
+
+RUN apk add --no-cache \
+    build-base
+
+WORKDIR /bot
+
+COPY bot/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY bot/ .
+
+RUN adduser -D telegram-bot-user && chown -R telegram-bot-user:telegram-bot-user /bot
+USER telegram-bot-user
+
+CMD ["sh", "-c", "python main.py"]
